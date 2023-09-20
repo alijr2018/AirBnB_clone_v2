@@ -28,15 +28,19 @@ class FileStorage:
         Return:
             returns a dictionary of __object
         """
-        if cls is not None:
-            for k, v in FileStorage.__objects.items():
-                # State.eec87033-c17c-42d5-bda7-619866e5b970
-                parts = k.split('.')
-                className = parts[0]
-                if cls == className:
-                    return FileStorage.__objects[k]
+        all_return = {}
 
-        return FileStorage.__objects
+        # if cls is valid
+        if cls:
+            if cls.__name__ in self.all_classes:
+                # copy objects of cls to temp dict
+                for key, val in self.__objects.items():
+                    if key.split('.')[0] == cls.__name__:
+                        all_return.update({key: val})
+        else:  # if cls is none
+            all_return = self.__objects
+
+        return all_return
 
     def new(self, obj):
         """sets __object to given obj
@@ -75,9 +79,7 @@ class FileStorage:
     def delete(self, obj=None):
         """delete obj from __objects if present
         """
-        if obj is not None:
-            key = ''
-            for k, v in FileStorage.__objects.items():
-                if obj == v:
-                    key = k
-            del FileStorage.__objects[key]
+        if obj:
+            # format key from obj
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            del self.__objects[key]
