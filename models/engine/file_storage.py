@@ -13,12 +13,12 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
         if cls is not None:
             if cls is not None:
-                for k, v in FileStorage.__objects.items():
-                    # State.eec87033-c17c-42d5-bda7-619866e5b970
-                    parts = k.split('.')
-                    className = parts[0]
-                    if cls == className:
-                        return FileStorage.__objects[k]
+                for i, j in FileStorage.__objects.items():
+
+                    k = i.split('.')
+                    cls_n = k[0]
+                    if cls == cls_n:
+                        return FileStorage.__objects[i]
 
         return FileStorage.__objects
 
@@ -61,8 +61,6 @@ class FileStorage:
     def delete(self, obj=None):
         """delete obj from __objeccts if it's inside"""
         if obj is not None:
-            k = ''
-            for i, j in FileStorage.__objects.items():
-                if obj == j:
-                    k == i
-            del FileStorage.__objects[k]
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            if key in self.__objects:
+                del self.__objects[key]
