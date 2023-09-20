@@ -16,8 +16,8 @@ class FileStorage:
                 for i, j in FileStorage.__objects.items():
 
                     k = i.split('.')
-                    cls_n = k[0]
-                    if cls == cls_n:
+                    className = k[0]
+                    if cls == className:
                         return FileStorage.__objects[i]
 
         return FileStorage.__objects
