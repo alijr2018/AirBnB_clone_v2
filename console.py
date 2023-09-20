@@ -119,32 +119,30 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        args_parts = shlex.split(args)
-        className = args_parts[0]  # state
-        pairs = args_parts[1:]  # ['name=Cairo', 'id=4dc46rec']
+        arg = shlex.split(args)
+        class_N = arg[0]
+        double = arg[1:]
 
-        if className not in HBNBCommand.classes:
+        if class_N not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        # now obj created- set attr
-        new_instance = HBNBCommand.classes[className]()
-        # loop key value pairs to extract each and setattr of new obj
-        for pair in pairs:
-            parts = pair.split("=")
+        new_instance = HBNBCommand.classes[class_N]()
 
-            attr_name = parts[0]
-            attr_value = parts[1]
-            # remove internal double quotes
-            attr_value = attr_value.replace('"', r'\"')
-            attr_value = attr_value.replace('_', ' ')
+        for doubles in double:
+            partie = doubles.split("=")
 
-            if '.' in attr_value and attr_name != 'email':
-                attr_value = float(attr_value)
-            elif attr_value.isdigit():
-                attr_value = int(attr_value)
+            name = partie[0]
+            value = partie[1]
+            value = value.replace('"', r'\"')
+            value = value.replace('_', ' ')
+
+            if '.' in value and name != 'email':
+                value = float(value)
+            elif value.isdigit():
+                value = int(value)
             else:
-                setattr(new_instance, attr_name, attr_value)
+                setattr(new_instance, name, value)
 
         new_instance.save()
         print(new_instance.id)
