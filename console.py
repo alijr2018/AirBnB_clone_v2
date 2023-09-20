@@ -120,14 +120,14 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         arg = shlex.split(args)
-        class_N = arg[0]
+        classes = arg[0]
         double = arg[1:]
 
-        if class_N not in HBNBCommand.classes:
+        if classes not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        new_instance = HBNBCommand.classes[class_N]()
+        new_instance = HBNBCommand.classes[classes]()
 
         for doubles in double:
             partie = doubles.split("=")
