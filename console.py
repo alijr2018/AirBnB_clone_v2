@@ -128,6 +128,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         new_instance = HBNBCommand.classes[class_N]()
+
         for doubles in double:
             partie = doubles.split("=")
 
