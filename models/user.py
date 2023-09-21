@@ -4,6 +4,9 @@ from models.base_model import BaseModel
 from models.base_model import Base
 from sqlalchemy import Column
 from sqlalchemy import String
+from os import getenv
+import sqlalchemy
+import models
 
 
 class User(BaseModel, Base):
@@ -21,3 +24,7 @@ class User(BaseModel, Base):
         password = ""
         first_name = ""
         last_name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
