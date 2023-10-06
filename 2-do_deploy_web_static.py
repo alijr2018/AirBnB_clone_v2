@@ -6,7 +6,7 @@ Fabric script that distributes an archive to your web servers
 from fabric.api import env, run, put
 from os.path import exists
 
-env.hosts = ['<IP web-01>', '<IP web-02>']
+env.hosts = ['52.205.94.206', '52.86.161.51']
 env.user = 'ubuntu'
 
 
