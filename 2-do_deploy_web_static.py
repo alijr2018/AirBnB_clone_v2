@@ -1,23 +1,20 @@
 #!/usr/bin/python3
-"""Deploy an archive of static html to my web servers with Fabric3"""
+""" a Fabric script (based on the file 1-pack_web_static.py),
+that distributes an archive to your web servers,
+using the function do_deploy"""
 
 from fabric import api
 from fabric.contrib import files
 import os
 
 
-api.env.hosts = ['142.44.167.235', '144.217.246.199']
+api.env.hosts = ['52.205.94.206', '52.86.161.51']
 api.env.user = 'ubuntu'
 api.env.key_filename = '~/.ssh/holberton'
 
 
 def do_deploy(archive_path):
     """Function to transfer `archive_path` to web servers.
-
-    Args:
-        archive_path (str): path of the .tgz file to transfer
-
-    Returns: True on success, False otherwise.
     """
     if not os.path.isfile(archive_path):
         return False

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Tar, transfer, and deploy static html to webservers"""
+"""a Fabric script (based on the file 2-do_deploy_web_static.py) that creates and distributes an archive to your web servers, using the function deploy:"""
 
 from fabric import api, decorators
 from fabric.contrib import files
@@ -13,17 +13,12 @@ api.env.key_filename = '~/.ssh/holberton'
 
 
 def deploy():
-    """Wrapper function to pack html files into tarball and transfer
-    to web servers."""
     return do_deploy(do_pack())
-
 
 @decorators.runs_once
 def do_pack():
     """Function to create tarball of webstatic files from the web_static
     folder in Airbnb_v2.
-
-    Returns: path of .tgz file on success, False otherwise
     """
     with api.settings(warn_only=True):
         isdir = os.path.isdir('versions')
@@ -43,11 +38,7 @@ def do_pack():
 
 def do_deploy(archive_path):
     """Function to transfer `archive_path` to web servers.
-
-    Args:
-        archive_path (str): path of the .tgz file to transfer
-
-    Returns: True on success, False otherwise.
+    True on success, False otherwise.
     """
     if not os.path.isfile(archive_path):
         return False
