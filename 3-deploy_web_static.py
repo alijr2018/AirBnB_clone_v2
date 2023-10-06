@@ -1,64 +1,72 @@
 #!/usr/bin/python3
-"""a Fabric script (based on the file 2-do_deploy_web_static.py) that creates and distributes an archive to your web servers, using the function deploy:"""
+"""a Fabric script (based on the file 2-do_deploy_web_static.py),
+that creates and distributes an archive to your web servers,
+using the function deploy"""
 
-from fabric import api, decorators
-from fabric.contrib import files
+from fabric.api import env, run, put, local
+from os.path import exists
 from datetime import datetime
-import os
+from os import makedirs
 
-api.env.hosts = ['holberton', 'holberton1']
-api.env.hosts = ['52.205.94.206', '52.86.161.51']
-api.env.user = 'ubuntu'
-api.env.key_filename = '~/.ssh/holberton'
+env.user = 'ubuntu'
+env.hosts = ['52.205.94.206', '52.86.161.51']
 
 
-def deploy():
-    return do_deploy(do_pack())
-
-@decorators.runs_once
 def do_pack():
-    """Function to create tarball of webstatic files from the web_static
-    folder in Airbnb_v2.
-    """
-    with api.settings(warn_only=True):
-        isdir = os.path.isdir('versions')
-        if not isdir:
-            mkdir = api.local('mkdir versions')
-            if mkdir.failed:
-                return False
-        suffix = datetime.now().strftime('%Y%m%d%M%S')
-        path = 'versions/web_static_{}.tgz'.format(suffix)
-        tar = api.local('tar -cvzf {} web_static'.format(path))
-        if tar.failed:
-            return False
-        size = os.stat(path).st_size
-        print('web_static packed: {} -> {}Bytes'.format(path, size))
-        return path
+    """ Generate a .tgz archive from the contents of the web_static folder. """
+    try:
+        if not exists("versions"):
+            makedirs("versions")
+
+        now = datetime.now()
+        file_name = "web_static_{}.tgz".format(now.strftime("%Y%m%d%H%M%S"))
+
+        local("tar -cvzf versions/{} web_static".format(file_name))
+
+        return "versions/{}".format(file_name)
+    except Exception as e:
+        return None
 
 
 def do_deploy(archive_path):
-    """Function to transfer `archive_path` to web servers.
-    True on success, False otherwise.
-    """
-    if not os.path.isfile(archive_path):
+    """ Distribute an archive to the web servers and deploy it.
+    True if successful, False otherwise."""
+    if not exists(archive_path):
+        print("Archive not found.")
         return False
-    with api.cd('/tmp'):
-        basename = os.path.basename(archive_path)
-        root, ext = os.path.splitext(basename)
-        outpath = '/data/web_static/releases/{}'.format(root)
-        try:
-            putpath = api.put(archive_path)
-            if files.exists(outpath):
-                api.run('rm -rdf {}'.format(outpath))
-            api.run('mkdir -p {}'.format(outpath))
-            api.run('tar -xzf {} -C {}'.format(putpath[0], outpath))
-            api.run('rm -f {}'.format(putpath[0]))
-            api.run('mv -u {}/web_static/* {}'.format(outpath, outpath))
-            api.run('rm -rf {}/web_static'.format(outpath))
-            api.run('rm -rf /data/web_static/current')
-            api.run('ln -s {} /data/web_static/current'.format(outpath))
-            print('New version deployed!')
-        except:
-            return False
-        else:
-            return True
+
+    try:
+        put(archive_path, '/tmp/')
+
+        file_name = archive_path.split("/")[-1]
+        folder_name = file_name.split(".")[0]
+        release_path = "/data/web_static/releases/{}/".format(folder_name)
+        run("mkdir -p {}".format(release_path))
+        run("tar -xzf /tmp/{} -C {}".format(file_name, release_path))
+
+        run("rm /tmp/{}".format(file_name))
+
+        run("mv {}web_static/* {}".format(release_path, release_path))
+        run("rm -rf {}web_static".format(release_path))
+
+        run("rm -rf /data/web_static/current")
+        run("ln -s {} /data/web_static/current".format(release_path))
+
+        print("New version deployed!")
+        return True
+    except Exception as e:
+        print("Deployment failed: {}".format(str(e)))
+        return False
+
+
+def deploy():
+    archive_path = do_pack()
+
+    if not archive_path:
+        return False
+
+    return do_deploy(archive_path)
+
+
+if __name__ == "__main__":
+    deploy()
