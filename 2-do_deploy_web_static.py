@@ -3,7 +3,7 @@
 that distributes an archive to your web servers,
 using the function do_deploy"""
 
-from fabric.api import env, run, put, local
+from fabric.api import env, run, put
 from os.path import exists
 
 env.user = 'ubuntu'
