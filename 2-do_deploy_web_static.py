@@ -3,13 +3,11 @@
 that distributes an archive to your web servers,
 using the function do_deploy"""
 
-from fabric.api import env, run, put
+from fabric.api import env
 import os.path
 
 env.user = 'ubuntu'
 env.hosts = ['52.205.94.206', '52.86.161.51']
-
-env.hosts = ["104.196.168.90", "35.196.46.172"]
 
 
 def do_deploy(archive_path):
