@@ -40,6 +40,5 @@ def do_deploy(archive_path):
 
 
 if __name__ == "__main__":
-    archive_path = "versions/web_static_20170315003959.tgz"
 
     do_deploy(archive_path)
