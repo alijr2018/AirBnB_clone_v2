@@ -15,7 +15,6 @@ def do_deploy(archive_path):
     True if successful, False otherwise.
     """
     if not exists(archive_path):
-        print("Archive not found.")
         return False
 
     try:
@@ -35,10 +34,8 @@ def do_deploy(archive_path):
         run("rm -rf /data/web_static/current")
         run("ln -s {} /data/web_static/current".format(release_path))
 
-        print("New version deployed!")
         return True
     except Exception as e:
-        print("Deployment failed: {}".format(str(e)))
         return False
 
 
